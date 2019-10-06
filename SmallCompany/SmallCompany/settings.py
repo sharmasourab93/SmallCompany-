@@ -62,10 +62,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            ],
+                 ],
+            },
         },
-    },
-]
+    ]
 
 WSGI_APPLICATION = 'SmallCompany.wsgi.application'
 
@@ -74,18 +74,15 @@ WSGI_APPLICATION = 'SmallCompany.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    """'default': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'smallco',
-        'USER': 'sourab',
-        'PASSWORD': 'sourab',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
-    }"""
-    'default': {
-        'NAME': 'django.db.backends.sqlite3',
+        'USER': 'pacman',
+        'PASSWORD': 'pacman',
+        'HOST': '192.168.0.107',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306'
+        },
     }
-}
 
 
 # Password validation
@@ -120,6 +117,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+DATE_INPUT_FORMATS = ['%d-%m-%Y']
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
