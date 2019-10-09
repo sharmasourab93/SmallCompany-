@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'analytics/base.html' %}
 
-</body>
-</html>
+{% block body %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Go</button>
+    </form>
+    <ul>
+    {% if all_models %}
+        {% for models in all_models %}
+            <li>{{ models.dated }}-{{ models.volume }} *
+                {{ models.price }}- {{ models.fuel_type }}
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        {{ text }}
+    {% endif %}
+{% endblock body %}

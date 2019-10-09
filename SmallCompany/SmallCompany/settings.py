@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'analytics.apps.AnalyticsConfig',
+    'upload.apps.UploadConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,7 +81,7 @@ DATABASES = {
         'NAME': 'smallco',
         'USER': 'pacman',
         'PASSWORD': 'pacman',
-        'HOST': '192.168.0.107',   # Or an IP Address that your DB is hosted on
+        'HOST': '192.168.0.104',   # Or an IP Address that your DB is hosted on
         'PORT': '3306'
         },
     }
@@ -117,9 +119,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-DATE_INPUT_FORMATS = ['%d-%m-%Y']
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = 'upload/static/uploads/'
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)

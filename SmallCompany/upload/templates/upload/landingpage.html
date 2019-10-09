@@ -1,0 +1,15 @@
+{% extends 'upload/base.html' %}
+
+{% block title %} {% endblock %}
+
+{% block body %}
+
+For uploading file(s):
+<ul>
+    <li><a href="{% url 'upload:UpdateView' %}">Upload One Instance</a></li>
+    <li><a href="{% url 'upload:UploadView' %}">Upload Bulk Instance</a></li>
+</ul>
+
+For trends/analytics:
+
+{% endblock body %}
