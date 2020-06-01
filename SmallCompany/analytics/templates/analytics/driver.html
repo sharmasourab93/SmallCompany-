@@ -1,0 +1,29 @@
+{% extends 'analytics/base.html' %}
+
+{% block body %}
+   <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Go</button>
+        <ul>
+        {% if model %}
+            <table border="solid black 2px">
+                <tbody>Purchase Records of {{ driver }}</tbody>                <tr>
+                    <th>Purchased Date</th>
+                    <th> Volume </th>
+                    <th>Price</th>
+                    <th>Fuel Type</th>
+                </tr>
+            {% for models in model %}
+                <tr>
+                    <th>{{ models.dated }}</th>
+                    <th>{{ models.volume }}</th>
+                    <th>{{ models.price }}</th>
+                    <th>{{ models.fuel_type }}</th>
+                </tr>
+            {% endfor %}
+            </table>
+        </ul>
+        {% endif %}
+    </form>
+{% endblock body %}

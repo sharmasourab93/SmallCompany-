@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from .models import FuelPrice, FuelType
 from .models import PurchaseRecord, DriverDetails
 from .forms import UpdateForm, UploadForm
+from .forms import PriceUpdateForm, DriverEnrollmentForm
 import os
 
 
@@ -65,14 +66,16 @@ class HomeView(TemplateView):
                 dated_bool = date_compare(dated)
                 items.append(dated)
                 
-                price = FuelPrice.objects.filter(fuel_name=query_fuel, priced_date=dated)
+                # TODO: Fix IndexError at /upload/single/
+                price = FuelPrice.objects.filter(fuel_name=query_fuel,
+                                                 priced_date=dated)
                 f_price = float(price[0].price)
                 
                 items.append(f_price)
                 
             except DateBeyondCurrentException:
                 
-                text = "Given date is ahead the current date"
+                text = "Given date is ahead of the current date"
                 
                 return render(request,
                               self.template_name,
@@ -280,3 +283,62 @@ class DateBeyondCurrentException(Exception):
     def __init__(self, date):
         Exception.__init__(self)
         self.date = date
+
+
+class PriceUpdation(TemplateView):
+    template_name = "upload/price_update.html"
+    model = FuelPrice
+    
+    def get(self, request, **kwargs):
+        form = PriceUpdateForm()
+        return render(request,
+                      self.template_name,
+                      {'form': form})
+    
+    def post(self, request, **kwargs):
+        
+        form = PriceUpdateForm()
+        if form.is_valid():
+            fuel = form.cleaned_data['fuel']
+            date = form.cleaned_date['date']
+            price = form.cleaned_data['price']
+            items = model(fuel, date, price)
+            items.save()
+            return render(request,
+                          self.template_name,
+                          {'context': "saved!(Y)"}
+                          )
+        
+        else:
+            return render(request,
+                          self.template_name,
+                          {'context': "Couldn't save! :-( ",
+                           'form': form}
+                          )
+            
+
+class DriverEnrollment(TemplateView):
+    template_name = "upload/driver_details.html"
+    model = DriverDetails
+    
+    def get(self, request, **kwargs):
+        form = DriverEnrollmentForm()
+        return render(request,
+                      self.template_name,
+                      {'form': form})
+    
+    def post(self, request, **kwargs):
+        form = DriverEnrollmentForm()
+        #TODO: Fix Datetimefield for the form response
+        # and model save
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            address = form.cleaned_data['address']
+            registered_on = form.cleaned_data['registered_on']
+            serial_id = form.cleaned_data['serial_id']
+            self.model(name, address, registered_on, serial_id).save()
+            
+            return render(request,
+                          self.template_name,
+                          {'form':form,
+                           })

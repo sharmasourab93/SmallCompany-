@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'smallco',
         'USER': 'pacman',
         'PASSWORD': 'pacman',
-        'HOST': '192.168.0.104',   # Or an IP Address that your DB is hosted on
+        'HOST': '192.168.43.65',   # Or an IP Address that your DB is hosted on
         'PORT': '3306'
         },
     }
@@ -124,5 +124,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = 'upload/static/uploads/'
+MEDIA_URL = 'upload/static/upload/'
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)

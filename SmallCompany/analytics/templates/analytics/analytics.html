@@ -1,0 +1,17 @@
+{% extends 'analytics/base.html' %}
+{% block title %}Analytics Home{% endblock %}
+
+{% block body %}
+To Home Page: <a href="{% url 'upload:LandingView' %}">Click Here</a>
+<br/>
+<p>
+For trends/analytics:
+    <ul>
+        <li><a href="{% url 'analytics:DriverSpendView'  %}">Total Spend By Driver ID</a></li>
+        <li><a href="{% url 'analytics:FuelSpendView'  %}">Total Spend By Fuel Type</a></li>
+        <li><a href="{% url 'analytics:TotalSpendView'  %}">Total Spend In A Month</a></li>
+        <li><a href="{% url 'analytics:AcrossSpendView'  %}">Total Spend Across Drivers</a></li>
+
+    </ul>
+</p>
+{% endblock body %}

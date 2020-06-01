@@ -13,6 +13,9 @@ class DriverDetails(models.Model):
     address = models.CharField(max_length=200)
     registered_on = models.DateField()
     serial_id = models.CharField(unique=True, max_length=7)
+    
+    def __str__(self):
+        return u'{0} -- {1}'.format(self.serial_id, self.name)
 
 
 class FuelType(models.Model):
@@ -28,20 +31,22 @@ class FuelType(models.Model):
         (5, 'LIQUID NITROGEN'),
         (6, 'BIODIESEL')
         )
-    name = models.CharField(unique=True, choices=FUEL_OPTIONS,
+    name = models.CharField(unique=True,
+                            choices=FUEL_OPTIONS,
                             max_length=16)
     
     def __str__(self):
-        
         return self.name + ' ' + str(self.fuel_id)
 
 
 class FuelPrice(models.Model):
 
-    fuel_name = models.ForeignKey(FuelType, on_delete=models.CASCADE,
+    fuel_name = models.ForeignKey(FuelType,
+                                  on_delete=models.CASCADE,
                                   max_length=16)
     priced_date = models.DateField()
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=5,
+                                decimal_places=2)
     
     def __str__(self):
         return self.fuel_name.name + ' ' + str(self.priced_date) + ' ' + str(self.price)
@@ -61,6 +66,10 @@ class PurchaseRecord(models.Model):
                                   on_delete=models.CASCADE,)
     dated = models.DateField()
     created = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+         return "{0}--{1}--{2}--{3}".format(self.driver_id, self.dated,
+                                    self.price, self.volume)
     
 
 class Document(models.Model):

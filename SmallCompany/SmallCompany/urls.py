@@ -5,6 +5,7 @@ from django.conf import settings
 
 urlpatterns = [
     url(r'admin/', admin.site.urls),
+    # url(r'^', include('upload.urls'), name="index"),
     url(r'upload/', include('upload.urls')),
     url(r'trends/', include('analytics.urls')),
     ]

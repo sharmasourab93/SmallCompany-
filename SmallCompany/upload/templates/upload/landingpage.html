@@ -1,6 +1,6 @@
 {% extends 'upload/base.html' %}
 
-{% block title %} {% endblock %}
+{% block title %}Upload/ Landing Home {% endblock %}
 
 {% block body %}
 
@@ -9,7 +9,16 @@ For uploading file(s):
     <li><a href="{% url 'upload:UpdateView' %}">Upload One Instance</a></li>
     <li><a href="{% url 'upload:UploadView' %}">Upload Bulk Instance</a></li>
 </ul>
-
+For Price Records Updation
+<ul>
+    <li><a href="">Update Fuel Records</a></li>
+</ul>
+For New Driver Enrollment
+<ul>
+    <li><a href="">Enroll Driver</a></li>
+</ul>
 For trends/analytics:
-
+<ul>
+    <li><a href="{% url 'analytics:AnalyticsView'  %}">For Analytics Home</a></li>
+</ul>
 {% endblock body %}

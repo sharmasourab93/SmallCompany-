@@ -2,8 +2,13 @@ from upload.models import DriverDetails
 from django import forms
 
 
-class HomeForm(forms.Form):
+class DriverSpendForm(forms.Form):
 
-    driver = forms.ModelChoiceField(queryset=
-                                    DriverDetails.objects.all()\
-                                    .order_by('serial_id'))
+    driver = forms.ModelChoiceField(
+        queryset=DriverDetails.objects.all())
+    
+
+class FuelSpendForm(forms.Form):
+    fuel_spend = forms.ModelChoiceField(
+        queryset=DriverDetails.objects.all()
+        )
