@@ -1,8 +1,85 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<style>
+    body {
+    background-image: url('{% static 'images/background.png' %}');
+    }
+    .logo
+    {
+        font-family:    Arial, Helvetica, sans-serif;
+        font-size:      40px;
+        font-weight:    bold;
+    }
+    .center{
+        text-align:             center;
+        list-style-position:    inside;
+    }
+    form .icon-color-green {
+        color:  green;
+    }
+
+    form .icon-color-red {
+        color: red;
+    }
+    style .belowtable {
+        font-size:  18px;
+        text-align: left;
+    }
+</style>
 <head>
-    <title>Upload</title>
+    <meta charset="UTF-8">
+    <title>Copy Cat: Clone</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png'%}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
-{% block body %}{% endblock body %}
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <!-- Header -->
+        <div class="navbar-header" >
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="logo"><a class="navbar-brand" href="{% url 'mainapp:index' %}">Copy Cat</a></div>
+        </div>
+
+        <!-- Items -->
+        <div class="collapse navbar-collapse" id="topNavBar">
+            <!--<form class="navbar-form navbar-left" role="search" method="get" action="{% url 'mainapp:index' %}">
+                <div class="form-group">
+                    <input type="text" class="form-control" value="{{ request.GET.q }}">
+                </div>
+                <button type="submit" class="btn btn-default">Search</button>
+            </form> -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="{% url 'mainapp:profile' user %}">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; {{ user }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'mainapp:bookmark' %}">
+                        <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>&nbsp; Bookmark
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'mainapp:logout' %}">
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+{% block content %} {% endblock content %}
 </body>
 </html>
