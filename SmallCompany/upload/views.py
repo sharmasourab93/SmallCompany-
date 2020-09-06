@@ -1,11 +1,118 @@
-from django.shortcuts import render
+# Imports related to Contrib/Auth.
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+
+# Imports for exception handling
 from django.core.exceptions import ObjectDoesNotExist
+
+# Imports related to URL
+from django.shortcuts import render, HttpResponse
+from django.shortcuts import get_object_or_404
+
+# Template/View Import
 from django.views.generic import TemplateView
+
+# Imports related to Models.
 from .models import FuelPrice, FuelType
 from .models import PurchaseRecord, DriverDetails
+
+# Imports from forms.
 from .forms import UpdateForm, UploadForm
 from .forms import PriceUpdateForm, DriverEnrollmentForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
+
+# Core Python Imports
 import os
+
+logger = logging.getLogger(__name__)
+
+
+# 1. Sign Up - Register a User
+def sign_up(request):
+    # logger.info('SignUp for {0}'.format(request.user))
+    context = {}
+    form = UserCreationForm(request.POST or None)
+    
+    if request.user.is_active and request.user.is_authenticated:
+        # logger.warning('Access Forbidden for {0}'.format(request.user))
+        return HttpResponseForbidden()
+    
+    if request.method == "POST":
+        # logger.debug('POST received. Redirecting to Filling')
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('/filldetails/')
+    
+    context['form'] = form
+    return render(request, 'registration/signup.html', context)
+
+
+# 2. Fill Details Right after sign up.
+@login_required
+def filldetails(request):
+    form = FillUpForm(request.POST or None)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            profile_ = form.save()
+            return redirect('/index/')
+    
+    context = {'form':form}
+    return render(request, 'registration/details_page.html', context)
+
+
+# 3. Login a user
+def login_user(request):
+    context = dict()
+    form = LoginForm()
+    another_form = UserCreationForm(request.POST or None)
+    
+    if request.user.is_active and request.user.is_authenticated:
+        return HttpResponseForbidden()
+    
+    if request.method == 'GET':
+        context = {'form':form}
+        return render(request, 'registration/login.html', context)
+    
+    else:
+        user = form.login(request)
+        
+        if user is not None and user.is_active:
+            login(request, user)
+            return render(request, 'mainapp/index.html', {'user':user})
+        
+        invalid = {'message':"Invalid Login", 'form':form}
+        return render(request, "registration/login.html", invalid)
+
+
+# 4. Logout a user
+@login_required
+def logout(request):
+    logout(request)
+    return render(request, "registration/logout.html")
+
+
+# 5. Password Change Not a priority
+@login_required
+def password_change(request):
+    if request.method == 'POST' and request.user.is_active:
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Your Password was successfully updated!")
+            return redirect('/accounts/login/')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    return render(request, 'registration/password.html', {'form':form})
 
 
 class LandingView(TemplateView):
