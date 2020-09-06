@@ -1,0 +1,15 @@
+{% extends 'registration/base.html' %}
+{% block content %}
+
+<div style="text-align: left; margin-left: 35%;margin-top: 10%">
+    <form method="post">
+        {{ invalid }}
+        {% csrf_token %}
+        {{form.as_p}}
+        <div style="margin-left: 0%;"><input type="submit" value="Login"></div>
+    </form>
+    <br/>
+    <strong>To create an account sign up: <a href="{% url 'mainapp:sign-up' %}">Sign Up</a></strong>
+</div>
+
+{% endblock content %}

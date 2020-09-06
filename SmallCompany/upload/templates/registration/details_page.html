@@ -1,0 +1,12 @@
+{% extends 'registration/base.html' %}
+{% block content %}
+<div style="text-align: left; margin-left: 25%;margin-top:7%;">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Sign Up">
+    </form>
+    <br/>
+</div>
+
+{% endblock content %}

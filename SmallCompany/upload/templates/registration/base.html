@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<style>
+    body {
+    background-image: url('{% static 'images/background.png' %}');
+    }
+    .logo
+    {
+        font-family:    Arial, Helvetica, sans-serif;
+        font-size:      40px;
+        font-weight:    bold;
+        text-align:     center;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>Copy Cat: Clone</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png'%}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <!-- Header -->
+        <div class="navbar-header" >
+            <div class="logo"><a class="navbar-brand navbar-center" href="#">Copy Cat</a></div>
+        </div></div>
+</nav>
+{% block content %} {% endblock content %}
+</body>
+</html>
