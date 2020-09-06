@@ -1,9 +1,16 @@
-from django.shortcuts import render
-from django.shortcuts import Http404
+# Django URL/Rendering View Functionality imports.
+from django.shortcuts import render, redirect, Http404
+from django.shortcuts import get_object_or_404, HttpResponse
+
+# View/Template Import
 from django.views.generic import TemplateView
 from django.views.generic import DetailView
-from upload.models import FuelPrice, FuelType
-from upload.models import DriverDetails, PurchaseRecord
+
+# Imports from Models.
+from SmallCompany.upload.models import FuelPrice, FuelType
+from SmallCompany.upload.models import DriverDetails, PurchaseRecord
+
+# Imports Related to Forms.
 from .forms import DriverSpendForm
 
 
