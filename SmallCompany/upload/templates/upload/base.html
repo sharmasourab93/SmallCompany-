@@ -5,6 +5,20 @@
     body {
     background-image: url('{% static 'images/background.png' %}');
     }
+    table, th, td{
+        border: 1px solid #dddddd;
+        border-spacing: 0 1em;
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        text-align: left;
+        padding: 25%;
+
+    }
+
+    tr:nth-child(even) {
+         background-color: #dddddd;
+    }
+
     .logo
     {
         font-family:    Arial, Helvetica, sans-serif;
@@ -29,7 +43,7 @@
 </style>
 <head>
     <meta charset="UTF-8">
-    <title>Copy Cat: Clone</title>
+    <title>Small Company</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png'%}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
@@ -47,30 +61,25 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <div class="logo"><a class="navbar-brand" href="{% url 'mainapp:index' %}">Copy Cat</a></div>
-        </div>
+            <div class="logo">
+                <a class="navbar-brand navbar-center" href="{% url 'upload:LandingView' %}">Small Company</a></div>
+            </div>
 
         <!-- Items -->
-        <div class="collapse navbar-collapse" id="topNavBar">
-            <!--<form class="navbar-form navbar-left" role="search" method="get" action="{% url 'mainapp:index' %}">
-                <div class="form-group">
-                    <input type="text" class="form-control" value="{{ request.GET.q }}">
-                </div>
-                <button type="submit" class="btn btn-default">Search</button>
-            </form> -->
-            <ul class="nav navbar-nav navbar-right">
+        <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="{% url 'mainapp:profile' user %}">
-                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; {{ user }}
+                    <a href="{% url 'upload:LandingView' %}">
+                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>&nbsp; Upload
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'mainapp:bookmark' %}">
-                        <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>&nbsp; Bookmark
+                    <a href="{% url 'analytics:AnalyticsView' %}">
+                        <!-- <i class=""></i> -->
+                        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>&nbsp; Analytics
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'mainapp:logout' %}">
+                    <a href="{% url 'upload:logout' %}">
                         <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
                     </a>
                 </li>
