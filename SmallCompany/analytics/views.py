@@ -1,17 +1,23 @@
 # Django URL/Rendering View Functionality imports.
 from django.shortcuts import render, redirect, Http404
-from django.shortcuts import get_object_or_404, HttpResponse
+from django.shortcuts import get_object_or_404, HttpResponse, HttpResponseRedirect
 
 # View/Template Import
 from django.views.generic import TemplateView
-from django.views.generic import DetailView
+from django.views.generic.detail import DetailView
 
 # Imports from Models.
-from SmallCompany.upload.models import FuelPrice, FuelType
-from SmallCompany.upload.models import DriverDetails, PurchaseRecord
+from upload.models import FuelPrice, FuelType
+from upload.models import DriverDetails, PurchaseRecord
 
 # Imports Related to Forms.
-from .forms import DriverSpendForm
+from .forms import DriverSpendForm, FuelSpendForm
+
+# Importing Logger and other python core modules.
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class LandingView(TemplateView):
@@ -22,46 +28,51 @@ class DriverSpendView(TemplateView):
     
     template_name = 'analytics/driver.html'
     model = PurchaseRecord
-    
     dd_model = DriverDetails
     
     def get(self, request, **kwargs):
-        
+        logger.debug(str(__class__.__module__))
         form = DriverSpendForm()
-        
         return render(request,
                       self.template_name,
                       {'form': form})
     
-    #TODO: Fix Post View of Spend By Driver
     def post(self, request, **kwargs):
+        logger.debug(str(__class__.__module__))
+        driver = request.POST.get('driver')
+        dd_query = DriverDetails.objects.get(id=driver)
+        logger.info("DD Query {}".format(str(dd_query)))
+        logger.info("Before dd_query & pr_query {}"
+                     .format(str(dd_query)))
         
-        form = DriverSpendForm(request.POST)
+        if dd_query is None:
+            pr_query = PurchaseRecord.objects.filter(driver_id=dd_query)
+            logger.info("Pr_query {}".format(dir(pr_query)))
+            logger.info("No Value Error, HttpResponseRedirect")
         
-        if form.is_valid():
-            
-            driver = form.cleaned_data['driver']
-            try:
-                dd_query = self.dd_model.objects.filter(serial_id=driver)
-                pr_query = self.model.objects.filter(driver_id=dd_query)
-            except ValueError:
-                return Http404(request)
-            
-            models = pr_query
-            return render(request,
-                          self.template_name,
-                          {'form': form,
-                           'models': models}
-                          )
+        #TODO: Fix Redirection Issue in Drivers 1
+        return redirect('/trends/driver/?driver=' + str(driver))
         
-        else:
-            text = "No records found."
-            
-            return render(request,
-                          self.template_name,
-                          {'form': form,
-                           'text': text})
 
+#TODO: Fix Redirection Issue in Drivers 1
+class DriverSpendDetails(TemplateView):
+    
+    template_name = 'analytics/driver_details.html'
+    model = PurchaseRecord
+    
+    def get(self, request, **kwargs):
+        logger.info(str(__class__.__module__))
+        obj = request.GET.get('driver')
+        driver = DriverDetails.objects.get(id=obj)
+        logger.info("In SPend details get method")
+        if obj is not None:
+            model = PurchaseRecord.objects.filter(driver_id=obj)
+            return render(request,
+                          self.template_name,
+                          {'model': model})
+        
+        return render(request, self.template_name, {'model': None})
+    
 
 class FuelSpendView(TemplateView):
     
@@ -72,8 +83,8 @@ class FuelSpendView(TemplateView):
         form = DriverSpendForm()
         return render(request, self.template_name,
                       {'form': form})
-    
 
+    
 class TotalSpendView(TemplateView):
     template_name = 'analytics/totalspend.html'
 
