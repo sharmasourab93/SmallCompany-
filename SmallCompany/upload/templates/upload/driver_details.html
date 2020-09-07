@@ -1,12 +1,14 @@
 {% extends 'upload/base.html' %}
 
 
-{% block body %}
+{% block content %}
+<div style="text-align: left; margin-left:5%;margin-top:5%;">
     <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Submit</button>
     </form>
          {{ record }}
-<br/>
-{% endblock body %}
+    <br/>
+</div>
+{% endblock content %}
