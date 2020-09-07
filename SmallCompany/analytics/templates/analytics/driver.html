@@ -1,34 +1,15 @@
 {% extends 'analytics/base.html' %}
 
 {% block content %}
-<div style="text-align: left; margin-left: 5%; margin-top:1%;width: 50%;">
-    <center style="text-align: left;">
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Go</button>
-        </form>
-        {% if model %}
-            <table border="solid black 2px">
-                <tbody>Purchase Records of {{ driver }}</tbody>
-                <tr>
-                    <th>Purchased Date</th>
-                    <th> Volume </th>
-                    <th>Price</th>
-                    <th>Fuel Type</th>
-                </tr>
-                {% for records in model %}
-                    <tr>
-                        <td>{{ records.dated }}</td>
-                        <td>{{ records.volume }}</td>
-                        <td>{{ records.price }}</td>
-                        <td>{{ records.fuel_type }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <strong><a href=""> No records found for driver  {{ driver }}.</a></strong>
-        {% endif %}
-    </center>
-</div>
+    <div style="text-align: left; margin-left: 5%; margin-top:1%;width: 50%;">
+        <center style="text-align: left;">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Go</button>
+            </form>
+            <br/>
+
+        </center>
+    </div>
 {% endblock content %}
