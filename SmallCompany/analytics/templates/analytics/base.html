@@ -5,14 +5,21 @@
     body {
     background-image: url('{% static 'images/background.png' %}');
     }
-    table, th, td{
-        border: 1px solid #dddddd;
-        border-spacing: 0 1em;
+    table {
         font-family: arial, sans-serif;
-        border-collapse: collapse;
-        text-align: left;
-        padding: 25%;
+        border-collapse: separate;
+        text-align: center;
+        border-spacing: 10px 10px;
+        padding: 10px;
 
+    }
+    td, th{
+        padding: 20px;
+        border: 1px solid black;
+        text-align: center;
+        width: 200px;
+        height: 25px;
+        padding: 20px;
     }
 
     tr:nth-child(even) {
@@ -50,6 +57,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
+<title>Small Company{% block title %}{% endblock title %}</title>
 <body>
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
