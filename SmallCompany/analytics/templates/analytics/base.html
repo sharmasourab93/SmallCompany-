@@ -1,8 +1,94 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<style>
+    body {
+    background-image: url('{% static 'images/background.png' %}');
+    }
+    table, th, td{
+        border: 1px solid #dddddd;
+        border-spacing: 0 1em;
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        text-align: left;
+        padding: 25%;
+
+    }
+
+    tr:nth-child(even) {
+         background-color: #dddddd;
+    }
+
+    .logo
+    {
+        font-family:    Arial, Helvetica, sans-serif;
+        font-size:      40px;
+        font-weight:    bold;
+    }
+    .center{
+        text-align:             center;
+        list-style-position:    inside;
+    }
+    form .icon-color-green {
+        color:  green;
+    }
+
+    form .icon-color-red {
+        color: red;
+    }
+    style .belowtable {
+        font-size:  18px;
+        text-align: left;
+    }
+</style>
 <head>
-    <title>Analytics</title>
+    <meta charset="UTF-8">
+    <title>Small Company</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png'%}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
-{% block body %}{% endblock body %}
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <!-- Header -->
+        <div class="navbar-header" >
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="logo">
+                <a class="navbar-brand navbar-center" href="{% url 'upload:LandingView' %}">Small Company</a></div>
+            </div>
+
+        <!-- Items -->
+        <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="{% url 'upload:LandingView' %}">
+                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>&nbsp; Upload
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'analytics:AnalyticsView' %}">
+                        <!-- <i class=""></i> -->
+                        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>&nbsp; Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'upload:logout' %}">
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+{% block content %} {% endblock content %}
 </body>
 </html>
