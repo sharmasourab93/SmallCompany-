@@ -1,0 +1,20 @@
+{% extends 'upload/base.html' %}
+
+{% block content %}
+<div style="text-align: left; margin-left:5%;margin-top:5%;">
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit">
+                Submit
+            </button>
+        </form>
+
+        {{ text }}
+
+        If you have to make bulk entries, please <a href="{% url 'upload:UploadView' %}">check here</a>.<br/>
+        Back to <a href="{% url 'upload:LandingView' %}">landing page.</a>
+</div>
+{% endblock content %}

@@ -1,8 +1,8 @@
 {% extends 'upload/base.html' %}
 
 
-{% block body %}
-
+{% block content %}
+<div style="text-align: left; margin-left:5%;margin-top:5%;">
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
@@ -12,7 +12,10 @@
     </form>
     {{ text }}
     {{ records }}
-<br/>
-If you want to make single entries please <a href="{% url 'upload:UpdateView' %}">check here</a>.<br/>
-Back to <a href="{% url 'upload:LandingView' %}">landing page.</a>
-{% endblock body %}
+
+    <br/>
+
+    If you want to make single entries please <a href="{% url 'upload:UpdateView' %}">check here</a>.<br/>
+    Back to <a href="{% url 'upload:LandingView' %}">landing page.</a>
+</div>
+{% endblock content %}
