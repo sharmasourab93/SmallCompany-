@@ -27,6 +27,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 
 # Core Python Imports
 import os
+import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +78,7 @@ def login_user(request):
         return HttpResponseForbidden()
     
     if request.method == 'GET':
-        context = {'form':form}
+        context = {'form': form}
         return render(request, 'registration/login.html', context)
     
     else:
@@ -124,9 +126,9 @@ class LandingView(TemplateView):
         return render(request, self.template_name)
 
 
-class HomeView(TemplateView):
+class UpdateSingleView(TemplateView):
     
-    template_name = 'upload/home.html'
+    template_name = 'upload/upload_single.html'
     model = PurchaseRecord
     
     def get(self, request, **kwargs):

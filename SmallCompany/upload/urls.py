@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import HomeView, UploadView, LandingView
+from .views import UpdateSingleView, UploadView, LandingView
 from .views import PriceUpdation, DriverEnrollment
 from .views import sign_up, login_user, logout, password_change
 
@@ -22,7 +22,7 @@ urlpatterns = [
     # 5. Landing Point View
     path('', LandingView.as_view(), name="LandingView"),
     # 6. Single Record Update View
-    path('single/', HomeView.as_view(), name='UpdateView'),
+    path('single/', UpdateSingleView.as_view(), name='UpdateView'),
     # 7. Bulk Update View
     path('bulk/', UploadView.as_view(), name='UploadView'),
     # 8. Price Update View
