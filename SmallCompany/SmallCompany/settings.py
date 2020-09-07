@@ -4,6 +4,8 @@ Django settings for SmallCompany project.
 """
 
 import os
+import logging
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -156,7 +158,7 @@ DATETIME_INPUT_FORMAT = ['%d-%m-%Y %H:%M:%S']
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/index/'
+LOGIN_REDIRECT_URL = '/upload/'
 
 LOGOUT_REDIRECT_URL = 'login'
 
