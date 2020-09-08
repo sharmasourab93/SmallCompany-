@@ -1,9 +1,10 @@
 # Django URL/Rendering View Functionality imports.
-from django.shortcuts import render, redirect, Http404
-from django.shortcuts import get_object_or_404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect, Http404, reverse
+from django.shortcuts import HttpResponse, HttpResponseRedirect
 
 # View/Template Import
 from django.views.generic import TemplateView
+from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 
 # Imports from Models.
@@ -15,6 +16,7 @@ from .forms import DriverSpendForm, FuelSpendForm
 
 # Importing Logger and other python core modules.
 import logging
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 logger = logging.getLogger(__name__)
@@ -31,47 +33,51 @@ class DriverSpendView(TemplateView):
     dd_model = DriverDetails
     
     def get(self, request, **kwargs):
-        logger.debug(str(__class__.__module__))
+        logger.debug("In Get")
         form = DriverSpendForm()
         return render(request,
                       self.template_name,
                       {'form': form})
     
     def post(self, request, **kwargs):
-        logger.debug(str(__class__.__module__))
+        
         driver = request.POST.get('driver')
-        dd_query = DriverDetails.objects.get(id=driver)
-        logger.info("DD Query {}".format(str(dd_query)))
-        logger.info("Before dd_query & pr_query {}"
-                     .format(str(dd_query)))
         
-        if dd_query is None:
-            pr_query = PurchaseRecord.objects.filter(driver_id=dd_query)
-            logger.info("Pr_query {}".format(dir(pr_query)))
-            logger.info("No Value Error, HttpResponseRedirect")
-        
-        #TODO: Fix Redirection Issue in Drivers 1
-        return redirect('/trends/driver/?driver=' + str(driver))
+        return redirect('/trends/driver/' + str(driver))
         
 
-#TODO: Fix Redirection Issue in Drivers 1
-class DriverSpendDetails(TemplateView):
+class DriverSpendDetails(ListView):
     
+    context = dict()
     template_name = 'analytics/driver_details.html'
     model = PurchaseRecord
+    paginate_by = 15
     
-    def get(self, request, **kwargs):
-        logger.info(str(__class__.__module__))
-        obj = request.GET.get('driver')
-        driver = DriverDetails.objects.get(id=obj)
-        logger.info("In SPend details get method")
-        if obj is not None:
-            model = PurchaseRecord.objects.filter(driver_id=obj)
-            return render(request,
-                          self.template_name,
-                          {'model': model})
+    def get_context_data(self, **kwargs):
+        id_ = self.kwargs['driver_id_id']
         
-        return render(request, self.template_name, {'model': None})
+        context = super(DriverSpendDetails, self)\
+            .get_context_data(**kwargs)
+        
+        purchase_record = PurchaseRecord.objects\
+            .filter(driver_id_id=id_).order_by("dated")
+        
+        paginator = Paginator(purchase_record, self.paginate_by)
+        page = self.request.GET.get('page')
+        
+        try:
+            page_by = paginator.page(page)
+        
+        except PageNotAnInteger:
+            page_by = paginator.page(1)
+            
+        except EmptyPage:
+            page_by = paginator.page(paginator.num_pages)
+            
+        context['driver'] = DriverDetails.objects.get(id=id_).name
+        context['purchase_record'] = page_by
+        
+        return context
     
 
 class FuelSpendView(TemplateView):
