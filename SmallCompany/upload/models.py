@@ -36,7 +36,7 @@ class FuelType(models.Model):
                             max_length=16)
     
     def __str__(self):
-        return self.name + ' ' + str(self.fuel_id)
+        return self.name
 
 
 class FuelPrice(models.Model):
