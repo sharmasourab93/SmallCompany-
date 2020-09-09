@@ -27,6 +27,7 @@
                     <th style="text-align: center;">PurchasedDate</th>
                     <th style="text-align: center;">Volume</th>
                     <th style="text-align: center;">Price</th>
+                    <th style="text-align: center;">Spend Amount ($)</th>
                     <th style="text-align: center;">FuelType</th>
                 </tr>
                 {% for records in purchase_record %}
@@ -35,6 +36,7 @@
                         <td>{{records.dated}}</td>
                         <td>{{records.volume}}</td>
                         <td>{{records.price}}</td>
+                        <td>{{records.spent| floatformat:"2"}}</td>
                         <td>{{records.fuel_type}}</td>
                     </tr>
                 {% endfor %}
