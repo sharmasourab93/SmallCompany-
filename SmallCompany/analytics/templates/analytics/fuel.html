@@ -1,4 +1,14 @@
 {% extends 'analytics/base.html' %}
 
-{% block body %}
-{% endblock body %}
+{% block content %}
+<div style="text-align: left; margin-left: 5%; margin-top:1%;width: 50%;">
+    <center style="text-align: left;">
+        <form method="POST" >
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="fuel">Go</button>
+        </form>
+    </center>
+</div>
+
+{% endblock content %}

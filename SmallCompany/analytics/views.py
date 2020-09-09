@@ -110,6 +110,11 @@ class DriverSpendDetails(ListView):
         
         return context
 
+#TODO: Add Spend URL & View By Year for driver
+# Example 1: /trends/driver/year/2019/month/08/
+# The above must extract records for 08-2019
+# Example 2: /trends/driver/year/2019
+# The above must extract all records by month for year 2019
 
 class DriverSpendByMonth(ListView):
     """
@@ -172,16 +177,45 @@ class DriverSpendByMonth(ListView):
 
 
 class FuelSpendView(TemplateView):
+    """
+    FuelSpendView
+        This view handles
+    """
     
-    template_name = 'analytics/details.html'
+    template_name = 'analytics/driver.html'
     model = PurchaseRecord
 
     def get(self, request, **kwargs):
-        form = DriverSpendForm()
+        form = FuelSpendForm()
         return render(request, self.template_name,
                       {'form': form})
-
     
+    def post(self, request, **kwargs):
+        by_time = request.POST.get('by_time')
+        driver = request.POST.get('fuel_spend')
+    
+        if by_time == '0':
+            return redirect('/trends/driver/' + str(driver))
+    
+        else:
+            return redirect('/trends/fuel/total/month/' + str(driver))
+        
+        
+class FuelSpendDetails(ListView):
+    pass
+
+
+class FuelSpendByMonth(ListView):
+    pass
+
+
+#TODO: Add Spend URL & View By Year for Fuel
+# Example 1: /trends/fuel/year/2019/month/08/
+# The above must extract records for 08-2019
+# Example 2: /trends/fuel/year/2019
+# The above must extract all records by month for year 2019
+    
+
 class TotalSpendView(TemplateView):
     template_name = 'analytics/totalspend.html'
 
