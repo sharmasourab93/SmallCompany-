@@ -24,11 +24,13 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 logger = logging.getLogger(__name__)
 
 
+# 1. URL Route to Analytics Landing Page
 class LandingView(TemplateView):
     """Landing View For Analytics Section"""
     template_name = 'analytics/analytics.html'
     
-    
+
+# 2. Driver Base View
 class DriverSpendView(TemplateView):
     """
     Driver Spend View
@@ -61,6 +63,7 @@ class DriverSpendView(TemplateView):
             return redirect('/trends/driver/total/month/' + str(driver))
         
 
+# 2.a. Driver Spend Details
 class DriverSpendDetails(ListView):
     """
     Driver Spend Details View (List View)
@@ -115,6 +118,7 @@ class DriverSpendDetails(ListView):
 # The above must extract all records by month for year 2019
 
 
+# 2.b. Total Driver Spend By Month
 class DriverSpendByMonth(ListView):
     """
     Driver Spend By Month (List View)
@@ -176,6 +180,7 @@ class DriverSpendByMonth(ListView):
         return context
 
 
+# 3. Fuel Spend View
 class FuelSpendView(TemplateView):
     """
     FuelSpendView
@@ -205,7 +210,8 @@ class FuelSpendView(TemplateView):
         else:
             return redirect('/trends/fuel/total/month/' + str(fuel))
         
-        
+
+# 3.a. Fuel Spend Details
 class FuelSpendDetails(ListView):
 
     template_name = 'analytics/list_all_records_template.html'
@@ -215,7 +221,6 @@ class FuelSpendDetails(ListView):
     def get_context_data(self, **kwargs):
         context = dict()
         fuel_id = self.kwargs.get('fuel_id')
-        driver = DriverDetails.objects
         purchase_record = PurchaseRecord.objects\
             .filter(fuel_type=fuel_id) \
             .annotate(spent=F('price') * F('volume')) \
@@ -242,7 +247,8 @@ class FuelSpendDetails(ListView):
 
         return context
         
-        
+
+# 3.b. Fuel Spend By Fuel Type
 class FuelSpendByMonth(ListView):
     template_name = 'analytics/list_by_month_year.html'
     model = PurchaseRecord
