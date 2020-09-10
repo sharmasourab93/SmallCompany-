@@ -26,9 +26,9 @@ urlpatterns = [
     # 3. Fuel Spend View
     path('fuel/', FuelSpendView.as_view(), name="FuelSpendView"),
     # 3.a. Fuel Spend Details by Drivers across Fuel Types
-    # path('fuel/<fuel_id>', FuelSpendDetail.as_view(), name="FuelSpendDetails"),
+    re_path(r'^fuel/(?P<fuel_id>\d)/$', FuelSpendDetails.as_view(), name="FuelSpendDetails"),
     # 3.b. Fuel Spend By Fuel Type
-    # path('fuel/total/month/<fuel_id>', FuelSpendDetail.as_view(), name="FuelSpendDetails"),
+    re_path(r'^fuel/total/month/(?P<fuel_id>\d)/$', FuelSpendByMonth.as_view(), name="FuelSpendDetails"),
     # 3.c Fuel Spend By Year and Month In One URL and One View
     # TODO: Fuel Spend By Year and Month In One URL and One View
     # path()
