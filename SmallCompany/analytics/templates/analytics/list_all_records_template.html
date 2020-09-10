@@ -3,89 +3,262 @@
 {% block content %}
 <div style="text-align: center; margin-left: 20%; margin-top:1%;width: 50%;">
     <center>
-        {% if purchase_record %}
-            {% if purchase_record.has_previous %}
-                <span>
-                    <a href="?page={{ purchase_record.previouse_page_number }}">
-                        <&nbsp;
-                    </a>
-                </span>
-            {% endif %}
-                 <strong>
-                      <a href="">Purchase Records for {{driver}} {{fuel}}</a>
-                 </strong>
-            {% if purchase_record.has_next %}
-                <span>
-                    <a href="?page={{ purchase_record.next_page_number }}">
-                        &nbsp;>
-                    </a>
-                </span>
-            {% endif %}
-            <table border = "solid black 2px">
-                {% if fuel %}
-                    <tr>
-                        <th style="text-align: center;">Serial Number</th>
-                        <th style="text-align: center;">PurchasedDate</th>
-                        <th style="text-align: center;">Volume</th>
-                        <th style="text-align: center;">Price</th>
-                        <th style="text-align: center;">Driver</th>
-                        <th style="text-align: center;">Spend Amount ($)</th>
-                    </tr>
-                    {% for records in purchase_record %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{records.dated}}</td>
-                            <td>{{records.volume}}</td>
-                            <td>{{records.price}}</td>
-                            <td>{{records.driver_id__name}}</td>
-                            <td>{{records.spent| floatformat:"2"}}</td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <th style="text-align: center;">Serial Number</th>
-                        <th style="text-align: center;">PurchasedDate</th>
-                        <th style="text-align: center;">Volume</th>
-                        <th style="text-align: center;">Price</th>
-                        <th style="text-align: center;">Fuel</th>
-                        <th style="text-align: center;">Spend Amount ($)</th>
-                    </tr>
-                    {% for records in purchase_record%}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{records.dated}}</td>
-                            <td>{{records.volume}}</td>
-                            <td>{{records.price}}</td>
-                            <td>{{records.fuel_type__name}}</td>
-                            <td>{{records.spent| floatformat:"2"}}</td>
-                        </tr>
-                    {% endfor %}
+        {% if detail %}
+        <!-- More Details Field -->
+            {% if purchase_record %}
+                <!-- Month will  be like a bool, where details will be based on the provided month -->
+                <!-- Start of Header navigation -->
+                {% if purchase_record.has_previous %}
+                    <span>
+                        <a href="?page={{ purchase_record.previouse_page_number }}">
+                            <&nbsp;
+                        </a>
+                    </span>
                 {% endif %}
-            </table>
-            {% if purchase_record.has_previous %}
-                <span>
-                    <a href="?page={{ purchase_record.previouse_page_number }}">
-                        <&nbsp;
-                    </a>
-                </span>
-            {% endif %}
-                 <strong>
-                      <a href="">Purchase Records for {{driver}}{{fuel}}</a>
-                 </strong>
-            {% if purchase_record.has_next %}
-                <span>
-                    <a href="?page={{ purchase_record.next_page_number }}">
-                        &nbsp;>
-                    </a>
-                </span>
-            {% endif %}
-            <br/>
-        {% else %}
-            <strong>
-                <a href="">No records found for {{driver.name}}{{fuel}}.</a>
-            </strong>
-        {% endif %}
+                     <strong>
+                          <a href="">Purchase Records for {{driver}} {{fuel}}</a>
+                     </strong>
+                {% if purchase_record.has_next %}
+                    <span>
+                        <a href="?page={{ purchase_record.next_page_number }}">
+                            &nbsp;>
+                        </a>
+                    </span>
+                {% endif %}
+                <br/>
+                <!-- End of Header navigation -->
+                {% if month %}
+                    <!-- If View is requested For a Specific Month -->
+                    {% if fuel %}
+                        <thead>
+                            <strong>
+                                <a href="">
+                                    Detail for {{fuel}} for the month {{month}} of the year {{year}}
+                                </a>
+                            </strong>
+                        </thead>
+                        <table border = "solid black 2px">
+                            <tr>
+                                <th style="text-align: center;">Serial Number</th>
+                                <th style="text-align: center;">PurchasedDate</th>
+                                <th style="text-align: center;">Volume</th>
+                                <th style="text-align: center;">Price</th>
+                                <th style="text-align: center;">Driver</th>
+                                <th style="text-align: center;">Spend Amount ($)</th>
+                            </tr>
+                            {% for records in purchase_record %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{records.dated}}</td>
+                                    <td>{{records.volume}}</td>
+                                    <td>{{records.price}}</td>
+                                    <td>{{records.driver_id__name}}</td>
+                                    <td>{{records.spent| floatformat:"2"}}</td>
+                                </tr>
+                            {% endfor %}
+                         </table>
+                    {% else %}
+                        <thead>
+                            <strong>
+                                <a href="">
+                                    Detail for {{fuel}} for the month {{month}} of the year {{year}}
+                                </a>
+                            </strong>
+                        </thead>
+                        <table>
+                            <tr>
+                                <th style="text-align: center;">Serial Number</th>
+                                <th style="text-align: center;">PurchasedDate</th>
+                                <th style="text-align: center;">Volume</th>
+                                <th style="text-align: center;">Price</th>
+                                <th style="text-align: center;">Fuel</th>
+                                <th style="text-align: center;">Spend Amount ($)</th>
+                            </tr>
+                        {% for records in purchase_record %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{records.dated}}</td>
+                                <td>{{records.volume}}</td>
+                                <td>{{records.price}}</td>
+                                <td>{{records.fuel_type__name}}</td>
+                                <td>{{records.spent| floatformat:"2"}}</td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    {% endif %}
+                {% else %}
+                    <!-- If View is Request for a year -->
+                    {% if fuel %}
+                        <thead>
+                            <strong>
+                                <a href="">
+                                    Detail for {{fuel}} for the year {{year}}
+                                </a>
+                            </strong>
+                        </thead>
+                        <thead>
+                            <strong>
+                                <a href="">
+                                    Detail for {{fuel}} for the year {{year}}
+                                </a>
+                            </strong>
+                        </thead>
+                        <table border = "solid black 2px">
+                            <tr>
+                                <th style="text-align: center;">Serial Number</th>
+                                <th style="text-align: center;">PurchasedDate</th>
+                                <th style="text-align: center;">Volume</th>
+                                <th style="text-align: center;">Price</th>
+                                <th style="text-align: center;">Driver</th>
+                                <th style="text-align: center;">Spend Amount ($)</th>
+                            </tr>
+                            {% for records in purchase_record %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{records.month}}</td>
+                                    <td>{{records.volume}}</td>
+                                    <td>{{records.price}}</td>
+                                    <td>{{records.driver_id__name}}</td>
+                                    <td>{{records.spent| floatformat:"2"}}</td>
+                                </tr>
+                            {% endfor %}
+                         </table>
+                    {% else %}
+                        <thead>
+                            <strong>
+                                <a href="">
+                                    Detail for {{fuel}} for the year {{year}}
+                                </a>
+                            </strong>
+                        </thead>
+                        <table>
+                            <tr>
+                                <th style="text-align: center;">Serial Number</th>
+                                <th style="text-align: center;">PurchasedDate</th>
+                                <th style="text-align: center;">Volume</th>
+                                <th style="text-align: center;">Price</th>
+                                <th style="text-align: center;">Fuel</th>
+                                <th style="text-align: center;">Spend Amount ($)</th>
+                            </tr>
+                            {% for records in purchase_record %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{records.dated}}</td>
+                                    <td>{{records.volume}}</td>
+                                    <td>{{records.price}}</td>
+                                    <td>{{records.fuel_type__name}}</td>
+                                    <td>{{records.spent| floatformat:"2"}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                {% endif %}
 
+                <!-- Start  of Footer Navigation -->
+                {% if purchase_record.has_previous %}
+                    <span>
+                        <a href="?page={{ purchase_record.previouse_page_number }}">
+                            <&nbsp;
+                        </a>
+                    </span>
+                {% endif %}
+                     <strong>
+                          <a href="">Purchase Records for {{driver}}{{fuel}}</a>
+                     </strong>
+                {% if purchase_record.has_next %}
+                    <span>
+                        <a href="?page={{ purchase_record.next_page_number }}">
+                            &nbsp;>
+                        </a>
+                    </span>
+                {% endif %}
+                <!-- End of Footer Nagivation -->
+            {% endif %}
+        {% else %}
+            <!-- Listing All Fuel/Driver's Records -->
+            {% if purchase_record %}
+                {% if purchase_record.has_previous %}
+                    <span>
+                        <a href="?page={{ purchase_record.previouse_page_number }}">
+                            <&nbsp;
+                        </a>
+                    </span>
+                {% endif %}
+                     <strong>
+                          <a href="">Purchase Records for {{driver}} {{fuel}}</a>
+                     </strong>
+                {% if purchase_record.has_next %}
+                    <span>
+                        <a href="?page={{ purchase_record.next_page_number }}">
+                            &nbsp;>
+                        </a>
+                    </span>
+                {% endif %}
+                <table border = "solid black 2px">
+                    {% if fuel %}
+                        <tr>
+                            <th style="text-align: center;">Serial Number</th>
+                            <th style="text-align: center;">PurchasedDate</th>
+                            <th style="text-align: center;">Volume</th>
+                            <th style="text-align: center;">Price</th>
+                            <th style="text-align: center;">Driver</th>
+                            <th style="text-align: center;">Spend Amount ($)</th>
+                        </tr>
+                        {% for records in purchase_record %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{records.dated}}</td>
+                                <td>{{records.volume}}</td>
+                                <td>{{records.price}}</td>
+                                <td>{{records.driver_id__name}}</td>
+                                <td>{{records.spent| floatformat:"2"}}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <th style="text-align: center;">Serial Number</th>
+                            <th style="text-align: center;">PurchasedDate</th>
+                            <th style="text-align: center;">Volume</th>
+                            <th style="text-align: center;">Price</th>
+                            <th style="text-align: center;">Fuel</th>
+                            <th style="text-align: center;">Spend Amount ($)</th>
+                        </tr>
+                        {% for records in purchase_record%}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{records.dated}}</td>
+                                <td>{{records.volume}}</td>
+                                <td>{{records.price}}</td>
+                                <td>{{records.fuel_type__name}}</td>
+                                <td>{{records.spent| floatformat:"2"}}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+                {% if purchase_record.has_previous %}
+                    <span>
+                        <a href="?page={{ purchase_record.previouse_page_number }}">
+                            <&nbsp;
+                        </a>
+                    </span>
+                {% endif %}
+                     <strong>
+                          <a href="">Purchase Records for {{driver}}{{fuel}}</a>
+                     </strong>
+                {% if purchase_record.has_next %}
+                    <span>
+                        <a href="?page={{ purchase_record.next_page_number }}">
+                            &nbsp;>
+                        </a>
+                    </span>
+                {% endif %}
+                <br/>
+            {% else %}
+                <strong>
+                    <a href="">No records found for {{driver.name}}{{fuel}}.</a>
+                </strong>
+            {% endif %}
+        {% endif %}
         <!-- Fuel to Driver Switch -->
         <br/>
         <strong>
