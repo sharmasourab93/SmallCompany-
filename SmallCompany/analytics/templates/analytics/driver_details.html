@@ -11,7 +11,7 @@
             </span>
         {% endif %}
          <strong>
-              <a href="">Purchase Records of {{driver}}</a>
+              <a href="">Purchase Records for {{driver}} {{fuel}}</a>
          </strong>
         {% if purchase_record.has_next %}
             <span>
@@ -28,7 +28,11 @@
                     <th style="text-align: center;">Volume</th>
                     <th style="text-align: center;">Price</th>
                     <th style="text-align: center;">Spend Amount ($)</th>
-                    <th style="text-align: center;">FuelType</th>
+                    {% if fuel %}
+                        <th style="text-align: center;">Driver</th>
+                    {% else %}
+                        <th style="text-align: center;">FuelType</th>
+                    {% endif %}
                 </tr>
                 {% for records in purchase_record %}
                     <tr>
@@ -36,14 +40,19 @@
                         <td>{{records.dated}}</td>
                         <td>{{records.volume}}</td>
                         <td>{{records.price}}</td>
-                        <td>{{records.spent| floatformat:"2"}}</td>
-                        <td>{{records.fuel_type}}</td>
+                        {% if fuel %}
+                            <td>{{records.fuel_type__name}}</td>
+                            <td>{{records.total_spent| floatformat:"2"}}</td>
+                        {% else %}
+                            <td>{{records.driver_id__name}}</td>
+                            <td>{{records.spent| floatformat:"2"}}</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </table>
         {% else %}
             <strong>
-                <a href="">No records found for driver {{driver.name}}.</a>
+                <a href="">No records found for {{driver.name}}{{fuel}}.</a>
             </strong>
         {% endif %}
         {% if purchase_record.has_previous %}
@@ -54,7 +63,7 @@
             </span>
         {% endif %}
          <strong>
-              <a href="">Purchase Records of {{driver}}</a>
+              <a href="">Purchase Records for {{driver}}{{fuel}}</a>
          </strong>
         {% if purchase_record.has_next %}
             <span>
@@ -67,7 +76,11 @@
     <br/>
     <strong>
         To check other drivers' purchase records, click
-        <a href="{% url 'analytics:DriverSpendView' %}">here</a>.
+        {% if fuel %}
+            <a href="{% url 'analytics:FuelSpendView' %}">here</a>.
+        {% else %}
+            <a href="{% url 'analytics:DriverSpendView' %}">here</a>.
+        {% endif %}
     </strong>
     <center><strong>Or</strong></center>
     <strong>
