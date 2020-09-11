@@ -1,16 +1,17 @@
 # Imports related to Contrib/Auth.
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 
 # Imports for exception handling
 from django.core.exceptions import ObjectDoesNotExist
 
 # Imports related to URL
-from django.shortcuts import render, HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect
+from django.http import HttpResponseForbidden
 
 # Template/View Import
 from django.views.generic import TemplateView
@@ -20,7 +21,7 @@ from .models import FuelPrice, FuelType
 from .models import PurchaseRecord, DriverDetails
 
 # Imports from forms.
-from .forms import UpdateForm, UploadForm
+from .forms import PurchaseUpdateForm, UploadForm, LoginForm
 from .forms import PriceUpdateForm, DriverEnrollmentForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import PasswordChangeForm
@@ -54,21 +55,7 @@ def sign_up(request):
     return render(request, 'registration/signup.html', context)
 
 
-# 2. Fill Details Right after sign up.
-@login_required
-def filldetails(request):
-    form = FillUpForm(request.POST or None)
-    
-    if request.method == 'POST':
-        if form.is_valid():
-            profile_ = form.save()
-            return redirect('/index/')
-    
-    context = {'form':form}
-    return render(request, 'registration/details_page.html', context)
-
-
-# 3. Login a user
+# 2. Login a user
 def login_user(request):
     context = dict()
     form = LoginForm()
@@ -117,6 +104,7 @@ def password_change(request):
     return render(request, 'registration/password.html', {'form':form})
 
 
+# 05. Landing View
 class LandingView(TemplateView):
     
     template_name = 'upload/landingpage.html'
@@ -126,149 +114,43 @@ class LandingView(TemplateView):
         return render(request, self.template_name)
 
 
-class UpdateSingleView(TemplateView):
-    
-    template_name = 'upload/upload_single.html'
-    model = PurchaseRecord
+# 06. Single Record Update, Purchase Record Update
+class PurchaseUpdate(TemplateView):
+    template_name = 'upload/base_template.html'
+    form = PurchaseUpdateForm()
     
     def get(self, request, **kwargs):
-    
-        form = UpdateForm()
-        
-        return render(request, self.template_name, {'form': form})
+        return render(request,
+                      self.template_name,
+                      {'form':self.form})
     
     def post(self, request, **kwargs):
+        object = request.POST
+        price = object['price']
+        volume = object['volume']
+        dated = object['dated']
+        fuel_type = FuelType.objects.get(fuel_id=object['fuel_type']).fuel_id
+        driver_id = DriverDetails.objects.get(id=object['driver_id']).id
         
-        form = UpdateForm(request.POST)
-        items = list()
+        purchase_update = PurchaseRecord(fuel_type_id=fuel_type,
+                                         driver_id_id=driver_id,
+                                         dated=dated,
+                                         price=price,
+                                         volume=volume)
+        purchase_update.save()
         
-        if form.is_valid():
-            
-            """
-                Looking for fuel in the form
-            """
-            
-            fuel = form.cleaned_data['fuel']
-            query_fuel = None
-            
-            try:
-                query_fuel = FuelType.objects.filter(fuel_id=fuel)[0]
-                items.append(query_fuel)
-                
-            except ObjectDoesNotExist:
-                
-                query_fuel = None
-                text = "Issues with Fuel Type"
-                
-                return render(request,
-                              self.template_name,
-                              {'form': form, 'text': text})
-            
-            """
-                Looking for date of purchase in the form
-            """
-            
-            dated = form.cleaned_data['date']
-            price = 0.00
-            
-            try:
-                dated_bool = date_compare(dated)
-                items.append(dated)
-                
-                # TODO: Fix IndexError at /upload/single/
-                price = FuelPrice.objects.filter(fuel_name=query_fuel,
-                                                 priced_date=dated)
-                f_price = float(price[0].price)
-                
-                items.append(f_price)
-                
-            except DateBeyondCurrentException:
-                
-                text = "Given date is ahead of the current date"
-                
-                return render(request,
-                              self.template_name,
-                              {'form': form, 'text': text})
-            
-            """
-                Get Volume in decimal format
-            """
-            
-            try:
-                volume = form.cleaned_data['volume']
-                volume = float(volume)
-                items.append(volume)
-                
-            except ValueError:
-                text = "Given value is not a float value"
-    
-                return render(request,
-                              self.template_name,
-                              {'form': form, 'text': text})
-            
-            """
-                Get Driver Id and verify if the object exists or not
-            """
-            
-            try:
-                
-                driver_id = form.cleaned_data['driver_id']
-                driver_obj = DriverDetails.objects.filter(serial_id=driver_id)[0]
-                items.append(driver_obj)
-                
-            except ObjectDoesNotExist:
-                text = "Giver Driver Id doesn't exist in the records"
-                
-                return render(request,
-                              self.template_name,
-                              {'form': form, 'text': text})
-            
-            keys = ['fuel_type', 'dated', 'price', 'volume', 'driver_id']
-            
-            m = self.model(fuel_type=items[0], dated=items[1],
-                           price=items[2], volume=items[3],
-                           driver_id=items[4]).save()
-            
-            text = "All entries are valid. Updated Successfully!"
-            
-            return render(request,
-                          self.template_name,
-                          {'form': form, 'text': text})
-        
-        else:
-            
-            return render(request,
-                          self.template_name,
-                          {'form': form})
-    
-
-def date_compare(date):
-        
-        """
-         Compares if the given date is bigger than the
-         current date.
-        :param date:
-        :return: True or DateBeyondCurrentException
-        """
-        import datetime
-        y1, m1, d1 = [int(x) for x in str(date).split('-')]
-        y2, m2, d2 = [int(x) for x in
-                      str(datetime.date.today()).split('-')]
-        
-        date_1 = datetime.date(y1, m1, d1)
-        date_2 = datetime.date(y2, m2, d2)
-        
-        if date_1 <= date_2:
-            return True
-        
-        else:
-            
-            raise DateBeyondCurrentException(date)
+        return render(request,
+                      self.template_name,
+                      {
+                          'form':self.form,
+                          'context':"Purchase Update done!"
+                          })
 
 
+# 07. Bulk Record Update
 class UploadView(TemplateView):
     
-    template_name = 'upload/upload_file.html'
+    template_name = 'upload/base_template.html'
     model = PurchaseRecord
     location = 'upload/static/uploads'
     mal_list = []
@@ -387,6 +269,63 @@ class UploadView(TemplateView):
                           {'form': form, 'text': text})
 
 
+# 08. Price Update Form
+class PriceUpdation(TemplateView):
+    template_name = "upload/base_template.html"
+    
+    def get(self, request, **kwargs):
+        form = PriceUpdateForm()
+        return render(request,
+                      self.template_name,
+                      {'form': form})
+    
+    def post(self, request, **kwargs):
+        
+        form = PriceUpdateForm()
+        fuel = request.POST.get('fuel')
+        fuel = FuelType.objects.get(fuel_id=fuel)
+        date = request.POST.get('date')
+        price = request.POST.get('price')
+        items = FuelPrice(fuel_name=fuel, priced_date=date, price=price)
+        items.save()
+        return render(request,
+                      self.template_name,
+                      {'context': "saved!(Y)"}
+                      )
+            
+
+# 09. Driver Enrollment Form View
+class DriverEnrollment(TemplateView):
+    template_name = "upload/base_template.html"
+    form = DriverEnrollmentForm()
+    
+    def get(self, request, **kwargs):
+        
+        return render(request,
+                      self.template_name,
+                      {'form': self.form})
+    
+    def post(self, request, **kwargs):
+            
+            object = request.POST
+            name, address = object.get('name'), object.get('address')
+            registered_on = object.get('registered_on')
+            serial_id = object.get('serial_id')
+            
+            driver_ = DriverDetails(name=name,
+                                    address=address,
+                                    registered_on=registered_on,
+                                    serial_id=serial_id)
+            driver_.save()
+            
+            success_ = "{0}'s record saved Successfully!".format(name)
+            return render(request,
+                          self.template_name,
+                          {'context': success_,
+                           'form': self.form})
+
+
+# Date Exception Utility
 class DateBeyondCurrentException(Exception):
     
     def __init__(self, date):
@@ -394,60 +333,26 @@ class DateBeyondCurrentException(Exception):
         self.date = date
 
 
-class PriceUpdation(TemplateView):
-    template_name = "upload/price_update.html"
-    model = FuelPrice
-    
-    def get(self, request, **kwargs):
-        form = PriceUpdateForm()
-        return render(request,
-                      self.template_name,
-                      {'form': form})
-    
-    def post(self, request, **kwargs):
-        
-        form = PriceUpdateForm()
-        if form.is_valid():
-            fuel = form.cleaned_data['fuel']
-            date = form.cleaned_date['date']
-            price = form.cleaned_data['price']
-            items = model(fuel, date, price)
-            items.save()
-            return render(request,
-                          self.template_name,
-                          {'context': "saved!(Y)"}
-                          )
-        
-        else:
-            return render(request,
-                          self.template_name,
-                          {'context': "Couldn't save! :-( ",
-                           'form': form}
-                          )
-            
+# Date Compare Method, utilized in 07. Bulk Upload
+def date_compare(date):
 
-class DriverEnrollment(TemplateView):
-    template_name = "upload/driver_details.html"
-    model = DriverDetails
+    """
+     Compares if the given date is bigger than the
+     current date.
+    :param date:
+    :return: True or DateBeyondCurrentException
+    """
+    import datetime
+    y1, m1, d1 = [int(x) for x in str(date).split('-')]
+    y2, m2, d2 = [int(x) for x in
+                  str(datetime.date.today()).split('-')]
+
+    date_1 = datetime.date(y1, m1, d1)
+    date_2 = datetime.date(y2, m2, d2)
+
+    if date_1<=date_2:
+        return True
+
+    else:
     
-    def get(self, request, **kwargs):
-        form = DriverEnrollmentForm()
-        return render(request,
-                      self.template_name,
-                      {'form': form})
-    
-    def post(self, request, **kwargs):
-        form = DriverEnrollmentForm()
-        #TODO: Fix Datetimefield for the form response
-        # and model save
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            address = form.cleaned_data['address']
-            registered_on = form.cleaned_data['registered_on']
-            serial_id = form.cleaned_data['serial_id']
-            self.model(name, address, registered_on, serial_id).save()
-            
-            return render(request,
-                          self.template_name,
-                          {'form':form,
-                           })
+        raise DateBeyondCurrentException(date)
