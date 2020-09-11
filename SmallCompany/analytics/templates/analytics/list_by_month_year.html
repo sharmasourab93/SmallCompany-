@@ -124,13 +124,19 @@
             </span>
         {% endif %}
         {% if total %}
-            <span>
+                <span>
+                    <strong>
+                        <a href="">
+                            Total Purchase Across Months/Years By Driver & Fuel
+                        </a>
+                    </strong>
+                </span><br/>
+                <strong><centre> <a href="">Or</a></centre></strong>
+                <br/>
                 <strong>
-                    <a href="">
-                        Total Purchase Across Months/Years By Driver & Fuel
-                    </a>
+                    Navigate back to <a href="{% url 'analytics:TotalSpendSpecific' %}">Previous page</a>.
                 </strong>
-            </span>
+
         {% elif fuel %}
             <span>
                 <strong>

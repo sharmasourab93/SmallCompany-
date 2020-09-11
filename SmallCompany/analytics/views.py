@@ -15,10 +15,12 @@ from django.db.models.functions import ExtractMonth, ExtractYear
 
 # Imports Related to Forms.
 from .forms import DriverSpendForm, FuelSpendForm
+from .forms import SpendByTimeForm
 
 # Importing Logger and other python core modules.
-import logging
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import logging
+from re import sub
 
 
 logger = logging.getLogger(__name__)
@@ -111,12 +113,6 @@ class DriverSpendDetails(ListView):
         
         return context
 
-#TODO: Add Spend URL & View By Year for driver
-# Example 1: /trends/driver/year/2019/month/08/
-# The above must extract records for 08-2019
-# Example 2: /trends/driver/year/2019
-# The above must extract all records by month for year 2019
-
 
 # 2.b. Total Driver Spend By Month
 class DriverSpendByMonth(ListView):
@@ -201,8 +197,6 @@ class FuelSpendView(TemplateView):
     def post(self, request, **kwargs):
         by_time = request.POST.get('by_time')
         fuel = request.POST.get('fuel_spend')
-        
-        print(request.POST)
     
         if by_time == '0':
             return redirect('/trends/fuel/' + str(fuel))
@@ -305,15 +299,9 @@ class FuelSpendByMonth(ListView):
         context['purchase_record'] = page_by
     
         return context
-
-
-#TODO: Add Spend URL & View By Year for Fuel
-# Example 1: /trends/fuel/year/2019/month/08/
-# The above must extract records for 08-2019
-# Example 2: /trends/fuel/year/2019
-# The above must extract all records by month for year 2019
     
 
+# 4. Total Spend Across All times.
 class TotalSpendView(ListView):
     template_name = 'analytics/list_by_month_year.html'
     model = PurchaseRecord
@@ -357,10 +345,106 @@ class TotalSpendView(ListView):
         return context
     
 
-class TotalSpendSpecific(ListView):
+# 5. Spend Specific to selected Time - Year and/or Month
+class TotalSpendSpecific(TemplateView):
+    """
+    Total Spend Specific View
+        This View redirects to Year and Month Specific URL
+        on a post request.
+    """
     
-    template_name = ''
+    template_name = 'analytics/ctemplate.html'
+    form = SpendByTimeForm()
+    context = dict()
+    
+    def get(self, request, *args, **kwargs):
+        
+        self.context['form'] = self.form
+        return render(request, self.template_name, self.context)
+    
+    def post(self, request, *args, **kwargs):
+        by_year = sub(r'[\(\)\,]', '', str(request.POST.get('year')))
+        by_month = sub(r'[\(\)\,]', '', str(request.POST.get('month')))
+        
+        if by_month:
+            return redirect('year/{0}/month/{1}'
+                            .format(by_year, by_month))
+        
+        else:
+            return redirect('year/{0}'.format(by_year))
+        
 
+# 5.a. & 5.b. Total Spent In a Specific Year or Month
+class TotalSpendTimeSpecific(ListView):
+    
+    template_name = 'analytics/list_by_month_year.html'
+    model = PurchaseRecord
+    
+    def get_context_data(self, **kwargs):
+        context = dict()
+        context['purchase_record'] = object
+        by_year = self.kwargs['year']
+        
+        try:
+            by_month = self.kwargs['month']
+            self.template_name = \
+                'analytics/list_all_records_template.html'
 
+            # Django ORM(Query) to extract data for
+            # a specific year and month.
+            purchase_record = PurchaseRecord.objects\
+                .annotate(year=ExtractYear('dated'),
+                          month=ExtractMonth('dated'))\
+                .values('year', 'month')\
+                .annotate(total=Count('id'))\
+                .filter(month=by_month, year=by_year) \
+                .annotate(spent=F('price') * F('volume')) \
+                
+            
+            summary = purchase_record.aggregate(sum=Sum('spent'))
+            purchase_record = purchase_record\
+                .values('dated', 'price',
+                        'volume', 'spent',
+                        'driver_id__name',
+                        'fuel_type__name') \
+                .order_by('dated', 'fuel_type__name')
+            
+            context['detail'] = object
+            context['month'] = by_month
+            context['year'] = by_year
+            context['purchase_record'] = purchase_record
+            context['sum'] = summary['sum']
+            
+            return context
+            
+        except KeyError:
+            
+            # Django ORM(Query) to extract data for a specific year
+            total = PurchaseRecord.objects\
+                .annotate(year=ExtractYear('dated'),
+                          month=ExtractMonth('dated')) \
+                .values('year', 'month')\
+                .annotate(total=Count('id'))\
+                .filter(year=by_year) \
+                .annotate(total_spent=Sum(F('price') * F('volume'))) \
+                .values('driver_id__name',
+                        'fuel_type__name',
+                        'month',
+                        'year',
+                        'total_spent') \
+                .order_by('month', 'year', 'driver_id')
+    
+            summary = total.aggregate(sum=Sum('total_spent'))
+    
+            context['detail'] = object
+            context['year'] = by_year
+            context['total'] = total
+            context['sum'] = summary['sum']
+    
+            return context
+        
+
+# 6. View Specific to Matplotlib
+#TODO: Add Matplotlib component.
 class AcrossSpendView(TemplateView):
     template_name = 'analytics/across.html'

@@ -16,7 +16,7 @@
                     </span>
                 {% endif %}
                      <strong>
-                          <a href="">Purchase Records for {{driver}} {{fuel}}</a>
+                         <!-- Time Purchase Records -->
                      </strong>
                 {% if purchase_record.has_next %}
                     <span>
@@ -29,11 +29,11 @@
                 <!-- End of Header navigation -->
                 {% if month %}
                     <!-- If View is requested For a Specific Month -->
-                    {% if fuel %}
                         <thead>
                             <strong>
                                 <a href="">
-                                    Detail for {{fuel}} for the month {{month}} of the year {{year}}
+                                    Detail for all records in the month {{month}} of the year
+                                    <a href="{% url 'analytics:TotalSpendTimeSpecific' year %}">{{year}}</a>
                                 </a>
                             </strong>
                         </thead>
@@ -41,51 +41,33 @@
                             <tr>
                                 <th style="text-align: center;">Serial Number</th>
                                 <th style="text-align: center;">PurchasedDate</th>
+                                <th style="text-align: center;">Driver</th>
                                 <th style="text-align: center;">Volume</th>
                                 <th style="text-align: center;">Price</th>
-                                <th style="text-align: center;">Driver</th>
+                                <th style="text-align: center;">Fuel</th>
                                 <th style="text-align: center;">Spend Amount ($)</th>
                             </tr>
                             {% for records in purchase_record %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{records.dated}}</td>
+                                    <td>{{records.driver_id__name}}</td>
                                     <td>{{records.volume}}</td>
                                     <td>{{records.price}}</td>
-                                    <td>{{records.driver_id__name}}</td>
+                                    <td>{{records.fuel_type__name}}</td>
                                     <td>{{records.spent| floatformat:"2"}}</td>
                                 </tr>
                             {% endfor %}
+                                <tr>
+                                    <td colspan="6"><strong>Total</strong></td>
+                                    <td>{{sum}}</td>
+                                </tr>
                          </table>
-                    {% else %}
-                        <thead>
-                            <strong>
-                                <a href="">
-                                    Detail for {{fuel}} for the month {{month}} of the year {{year}}
-                                </a>
-                            </strong>
-                        </thead>
-                        <table>
-                            <tr>
-                                <th style="text-align: center;">Serial Number</th>
-                                <th style="text-align: center;">PurchasedDate</th>
-                                <th style="text-align: center;">Volume</th>
-                                <th style="text-align: center;">Price</th>
-                                <th style="text-align: center;">Fuel</th>
-                                <th style="text-align: center;">Spend Amount ($)</th>
-                            </tr>
-                        {% for records in purchase_record %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{records.dated}}</td>
-                                <td>{{records.volume}}</td>
-                                <td>{{records.price}}</td>
-                                <td>{{records.fuel_type__name}}</td>
-                                <td>{{records.spent| floatformat:"2"}}</td>
-                            </tr>
-                        {% endfor %}
-                        </table>
-                    {% endif %}
+                        <strong>
+                            To check data for more year or month specific data click
+                            <a href="{% url 'analytics:TotalSpendSpecific' %}">here</a>.
+                        </strong>
+                        <strong><center>Or</center></strong>
                 {% else %}
                     <!-- If View is Request for a year -->
                     {% if fuel %}
@@ -162,9 +144,7 @@
                         </a>
                     </span>
                 {% endif %}
-                     <strong>
-                          <a href="">Purchase Records for {{driver}}{{fuel}}</a>
-                     </strong>
+                     <!-- Purchase of Records -->
                 {% if purchase_record.has_next %}
                     <span>
                         <a href="?page={{ purchase_record.next_page_number }}">
@@ -258,10 +238,7 @@
                     <a href="">No records found for {{driver.name}}{{fuel}}.</a>
                 </strong>
             {% endif %}
-        {% endif %}
-        <!-- Fuel to Driver Switch -->
-        <br/>
-        <strong>
+            <strong>
             {% if fuel %}
                 To check other fuel purchase records, click
                 <a href="{% url 'analytics:FuelSpendView' %}">here</a>.
@@ -269,12 +246,15 @@
                 To check other drivers' purchase records, click
                 <a href="{% url 'analytics:DriverSpendView' %}">here</a>.
             {% endif %}
-        </strong>
-    <center><strong>Or</strong></center>
-    <strong>
-        To check on other available stats click
-        <a href="{% url 'analytics:AnalyticsView' %}">here</a>.
-    </strong>
+            </strong>
+            <center><strong>Or</strong></center>
+            <strong>
+                To check on other available stats click
+                <a href="{% url 'analytics:AnalyticsView' %}">here</a>.
+            </strong>
+        {% endif %}
+        <!-- Fuel to Driver Switch -->
+        <br/>
     </center>
 </div>
 {% endblock content %}

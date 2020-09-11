@@ -38,13 +38,19 @@
             <tr>
                 <td> 3. </td>
                 <td>
-                    <a href="{% url 'analytics:TotalSpendView'  %}">Total Spend In A Month</a>
+                    <a href="{% url 'analytics:TotalSpendView'  %}">Total Spend by Driver & Fuel Across Time Range</a>
                 </td>
             </tr>
             <tr>
                 <td> 4. </td>
                 <td>
-                    <a href="{% url 'analytics:AcrossSpendView'  %}">Total Spend Across Drivers</a>
+                    <a href="{% url 'analytics:TotalSpendSpecific'  %}">Total Spend Specific Year or Month</a>
+                </td>
+            </tr>
+            <tr>
+                <td> 5. </td>
+                <td>
+                    <a href="{% url 'analytics:VisualizeSpendView'  %}">Visualize Spend (Trials with Matplotlib)</a>
                 </td>
             </tr>
         </table>

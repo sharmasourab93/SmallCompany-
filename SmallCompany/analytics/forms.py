@@ -1,4 +1,6 @@
 from upload.models import DriverDetails, FuelType
+from upload.models import PurchaseRecord
+from django.db.models.functions import ExtractYear, ExtractMonth
 from django import forms
 
 
@@ -15,9 +17,6 @@ class DriverSpendForm(forms.Form):
         )
     by_month = forms.ChoiceField(choices=CHOICES,
                                  widget=forms.RadioSelect)
-
-    # TODO: Tips for Adding One URL One View and dynamic outputs
-    # Driver Form to accept Optional Year and optional Month
     
 
 class FuelSpendForm(forms.Form):
@@ -33,5 +32,18 @@ class FuelSpendForm(forms.Form):
     by_time = forms.ChoiceField(choices=CHOICES,
                                 widget=forms.RadioSelect)
 
-    # TODO: Tips for Adding One URL One View and dynamic outputs
-    # Fuel Form to accept Optional Year and optional Month
+
+class SpendByTimeForm(forms.Form):
+    extract_year = PurchaseRecord.objects\
+        .annotate(year=ExtractYear('dated'))\
+        .distinct().values_list('year').all()
+    extract_month = PurchaseRecord.objects\
+        .annotate(month=ExtractMonth('dated'))\
+        .distinct().values_list('month').all()
+    
+    year = forms.ModelChoiceField(queryset=extract_year,
+                                  empty_label="Select Year",
+                                  required=True)
+    month = forms.ModelChoiceField(queryset=extract_month,
+                                   empty_label="Select Month",
+                                   required=False)
