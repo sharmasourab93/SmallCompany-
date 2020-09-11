@@ -27,15 +27,6 @@ class LoginForm(forms.Form):
         return user
         
         
-class UpdateForm(forms.Form):
-    DATE_INPUT_FORMATS = ['%d-%m-%Y']
-    
-    fuel = forms.ChoiceField(choices=FUEL_OPTIONS)
-    date = forms.DateField(widget=forms.SelectDateWidget)
-    volume = forms.DecimalField(max_digits=5)
-    driver_id = forms.CharField(max_length=10)
-    
-    
 class UploadForm(forms.ModelForm):
     # To Bulk Upload from a file
     
