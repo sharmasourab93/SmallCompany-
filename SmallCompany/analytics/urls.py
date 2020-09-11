@@ -2,7 +2,8 @@ from django.urls import path, re_path
 from .views import DriverSpendView, FuelSpendView
 from .views import DriverSpendDetails, DriverSpendByMonth
 from .views import FuelSpendDetails, FuelSpendByMonth
-from .views import TotalSpendView, AcrossSpendView, LandingView
+from .views import TotalSpendView, TotalSpendSpecific
+from .views import AcrossSpendView, LandingView
 
 
 app_name = "analytics"
@@ -34,7 +35,8 @@ urlpatterns = [
     # path()
     
     # 4. Total Spend In  A Month Across Categories
-    path('month/', TotalSpendView.as_view(), name="TotalSpendView"),
+    path('spends/', TotalSpendView.as_view(), name="TotalSpendView"),
+    re_path(r'^spends/driver/(?P<>\d+)/fuel/$', TotalSpendSpecific.as_view(), name="TotalSpendView"),
     
     # 5. Overall Spend Analysis
     path('across/', AcrossSpendView.as_view(), name="AcrossSpendView"),

@@ -314,8 +314,52 @@ class FuelSpendByMonth(ListView):
 # The above must extract all records by month for year 2019
     
 
-class TotalSpendView(TemplateView):
-    template_name = 'analytics/totalspend.html'
+class TotalSpendView(ListView):
+    template_name = 'analytics/list_by_month_year.html'
+    model = PurchaseRecord
+    paginate_by = 15
+    
+    def get_context_data(self, **kwargs):
+        #context = super(TotalSpendView, self).__init__(**kwargs)
+        context = dict()
+        """
+         This below given annotation will roughly translate
+         to the query given:
+         select d.name,
+                sum(c.price * c.volume)as total_spent,
+                DATE_FORMAT(c.dated, '%m-%Y') as dated,
+                c.fuel_type_id as fuel_name
+         from upload_purchaserecord c
+         inner join  upload_driverdetails d on
+            d.id = c.driver_id_id
+         group by DATE_FORMAT(c.dated, '%m-%Y'),
+                  c.fuel_type_id;
+        """
+        
+        purchase_record = PurchaseRecord.objects \
+            .annotate(month=ExtractMonth('dated'),
+                      year=ExtractYear('dated'), ) \
+            .values('month', 'year') \
+            .annotate(total=Count('id')) \
+            .annotate(total_spent=Sum(F('price') * F('volume'))) \
+            .values('month', 'year',
+                    'total_spent',
+                    'driver_id__name',
+                    'fuel_type__name') \
+            
+        summary = purchase_record.aggregate(sum=Sum('total_spent'))
+        purchase_record = purchase_record.order_by('month', 'year', 'driver_id__name')
+        
+        context['total'] = purchase_record
+        context['purchase_record'] = object
+        context['sum'] = summary['sum']
+        
+        return context
+    
+
+class TotalSpendSpecific(ListView):
+    
+    template_name = ''
 
 
 class AcrossSpendView(TemplateView):

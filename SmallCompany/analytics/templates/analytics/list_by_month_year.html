@@ -10,15 +10,30 @@
                 </a>
             </span>
         {% endif %}
-
-        {% if fuel %}
-            <strong>
-                  <a href="">Purchase Records for {{fuel}}</a>
-            </strong>
+        {% if total %}
+            <span>
+                <strong>
+                    <a href="">
+                        Total Purchase Across Months/Years By Driver & Fuel
+                    </a>
+                </strong>
+            </span>
+        {% elif fuel %}
+            <span>
+                <strong>
+                    Purchase Records Across Months for <a href="">{{fuel}}</a>
+                </strong>
+            </span>
+        {% elif driver %}
+            <span>
+                <strong>
+                    Purchase Records Across Fuel for <a href="">{{driver}}</a>
+                </strong>
+            </span>
         {% else %}
-         <strong>
-              <a href="">Purchase Records of {{driver}}</a>
-         </strong>
+            <span>
+                <strong><a href="">No Records Found</a></strong>
+            </span>
         {% endif %}
         {% if purchase_record.has_next %}
             <span>
@@ -28,9 +43,36 @@
             </span>
         {% endif %}
         {% if purchase_record %}
-            {{ purchase_record }}
-            <table border = "solid black 2px">
-                {% if fuel %}
+            {% if total %}
+                <!--View Specific to Total Spend-->
+                <table border = "solid black 2px">
+                    <tr>
+                        <th style="text-align: center;">Serial Number</th>
+                        <th style="text-align: center;">Driver</th>
+                        <th style="text-align: center;">Fuel</th>
+                        <th style="text-align: center;">Dated (Month)</th>
+                        <th style="text-align: center;">Dated (Year)</th>
+                        <th style="text-align: center;">Total Spend ($)</th>
+
+                    </tr>
+                    {% for records in total %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{records.driver_id__name}}</td>
+                            <td>{{records.fuel_type__name}}</td>
+                            <td>{{records.month}}</td>
+                            <td>{{records.year}}</td>
+                            <td>{{records.total_spent| floatformat:"2"}}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="5"><strong>Total</strong></td>
+                        <td>{{sum}}</td>
+                    </tr>
+                </table>
+            {% elif fuel %}
+                <!-- View Specific to Listing By Month/Year for Fuel-->
+                <table>
                     <tr>
                         <th style="text-align: center;">Serial Number</th>
                         <th style="text-align: center;">Driver</th>
@@ -39,18 +81,7 @@
                         <th style="text-align: center;">Total Spend ($)</th>
                         <th style="text-align: center;">Record Count For the Month</th>
                     </tr>
-                {% else %}
-                    <tr>
-                        <th style="text-align: center;">Serial Number</th>
-                        <th style="text-align: center;">Driver</th>
-                        <th style="text-align: center;">Dated (Month)</th>
-                        <th style="text-align: center;">Dated (Year)</th>
-                        <th style="text-align: center;">Total Spend ($)</th>
-                        <th style="text-align: center;">Record Count For the Month</th>
-                    </tr>
-                {% endif %}
-                {% for records in purchase_record %}
-                    {% if fuel %}
+                    {% for records in purchase_record %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{records.driver_id__name}}</td>
@@ -59,7 +90,20 @@
                             <td>{{records.total_spent| floatformat:"2"}}</td>
                             <td>{{records.record_count}}</td>
                         </tr>
-                    {% else %}
+                    {% endfor %}
+                </table>
+            {% elif driver %}
+                <!-- View Specific to Listing By Month/Year Fir Driver-->
+                <table>
+                    <tr>
+                        <th style="text-align: center;">Serial Number</th>
+                        <th style="text-align: center;">Fuel</th>
+                        <th style="text-align: center;">Dated (Month)</th>
+                        <th style="text-align: center;">Dated (Year)</th>
+                        <th style="text-align: center;">Total Spend ($)</th>
+                        <th style="text-align: center;">Record Count For the Month</th>
+                    </tr>
+                    {% for records in purchase_record %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{records.fuel_type__name}}</td>
@@ -68,13 +112,9 @@
                             <td>{{records.total_spent| floatformat:"2"}}</td>
                             <td>{{records.record_count}}</td>
                         </tr>
-                    {% endif %}
-                {% endfor %}
-            </table>
-        {% else %}
-            <strong>
-                <a href="">No records found for driver {{driver.name}}.</a>
-            </strong>
+                    {% endfor %}
+                </table>
+            {% endif %}
         {% endif %}
         {% if purchase_record.has_previous %}
             <span>
@@ -83,15 +123,30 @@
                 </a>
             </span>
         {% endif %}
-
-        {% if fuel%}
-            <strong>
-                  <a href="">Purchase Records for {{fuel}}</a>
-            </strong>
+        {% if total %}
+            <span>
+                <strong>
+                    <a href="">
+                        Total Purchase Across Months/Years By Driver & Fuel
+                    </a>
+                </strong>
+            </span>
+        {% elif fuel %}
+            <span>
+                <strong>
+                    Purchase Records Across Months for <a href="">{{fuel}}</a>
+                </strong>
+            </span>
+        {% elif driver %}
+            <span>
+                <strong>
+                    Purchase Records Across Fuel for <a href="">{{driver}}</a>
+                </strong>
+            </span>
         {% else %}
-         <strong>
-              <a href="">Purchase Records of {{driver}}</a>
-         </strong>
+            <span>
+                <strong><a href="">No Records Found</a></strong>
+            </span>
         {% endif %}
         {% if purchase_record.has_next %}
             <span>
@@ -102,19 +157,5 @@
         {% endif %}
     </center>
     <br/>
-    <strong>
-        {% if driver %}
-            To check other drivers' purchase records, click
-            <a href="{% url 'analytics:DriverSpendView' %}">here</a>.
-        {% else %}
-            To check other fuel's purchase records, click
-            <a href="{% url 'analytics:FuelSpendView' %}">here</a>.
-        {% endif %}
-    </strong>
-    <center><strong>Or</strong></center>
-    <strong>
-        To check on other available stats click
-        <a href="{% url 'analytics:AnalyticsView' %}">here</a>.
-    </strong>
 </div>
 {% endblock content %}
