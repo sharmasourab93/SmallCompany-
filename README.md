@@ -82,13 +82,12 @@ All the views are implemented with URL routes as follows:
 
 
 ### TODOs: 
-1. Detail View redirection to Every Month's 
-2. Integration with SignUp/Login 
-3. Minor UI Corrections
-4. Add Test Cases
-5. Add Matplotlib
-6. Deploying with Gunicon & Nginx
-7. Deploying with Docker, K8s
+1. Integration with SignUp/Login 
+2. Minor UI Corrections
+3. Add Test Cases
+4. Add Matplotlib
+5. Deploying with Gunicon & Nginx
+6. Deploying with Docker, K8s
 
 
 ### Resources 
